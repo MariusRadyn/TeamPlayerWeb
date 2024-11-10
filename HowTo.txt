@@ -16,3 +16,5 @@ firebase init hosting
 firebase deploy
 
 https://teamplayer-9ef3c.web.app
+
+use CodeMagic to publish
