@@ -1,0 +1,18 @@
+flutter create teamplayerweb
+flutter build web
+
+flutter channel stable
+flutter upgrade
+
+Ho to build Web App
+
+Flutter->build for web
+files are built to built/web"
+
+install firebase
+npm install -g firebase-tools
+firebase experiments:enable webframeworks
+firebase init hosting
+firebase deploy
+
+https://teamplayer-9ef3c.web.app
