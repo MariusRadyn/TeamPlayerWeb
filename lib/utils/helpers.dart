@@ -569,6 +569,7 @@ class SyncLib {
       onListUpdate!(_songData);
     }
 
+    _isSyncing = false;
     onSyncDone!(_isSyncing);
   }
 }

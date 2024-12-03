@@ -2,6 +2,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
+bool synchBusy = false;
+
 // UserData
 final String fireUserName = 'user1';
 final String fireUserRecyclebin = '${fireUserName}_recycle/';

@@ -48,12 +48,22 @@ class _MyAppState extends State<MyApp> {
     userData.userName = "Marius";
     userData.surname = "Radyn";
     userData.userID = "user1";
+    synchBusy = true;
+
     super.initState();
 
-    _syncLib.onListUpdate = (songDta) {
+    _syncLib.onListUpdate = (_songDta) {
       if (mounted) {
         setState(() {
-          lstSongsLib = songDta;
+          lstSongsLib = _songDta;
+        });
+      }
+    };
+
+    _syncLib.onSyncDone = (_syncDone) {
+      if (mounted) {
+        setState(() {
+          synchBusy = !_syncDone;
         });
       }
     };
@@ -68,11 +78,12 @@ class _MyAppState extends State<MyApp> {
 
   void _onItemTapped(int index) {
     if (index == 4) {
-      fireDbWrite(
-        'SongsTable',
-        'user1',
-        SongData(songName: 'new song1', author: 'unknown1', genre: 'pop1'),
-      );
+      //fireDbWrite(
+      //  'SongsTable',
+      //  'user1',
+      //  SongData(songName: 'new song1', author: 'unknown1', genre: 'pop1'),
+      //);
+
       //Sync(context);
       // Navigator.push(
       //   context,
@@ -83,6 +94,7 @@ class _MyAppState extends State<MyApp> {
       // );
       return;
     }
+
     setState(() {
       _currentIndex = index;
     });

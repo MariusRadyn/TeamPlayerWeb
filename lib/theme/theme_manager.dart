@@ -49,7 +49,7 @@ ThemeData darkTheme = ThemeData(
   ),
   appBarTheme: const AppBarTheme(
     backgroundColor: COLOR_APPBAR,
-    iconTheme: IconThemeData(color: COLOR_BLUE),
+    iconTheme: IconThemeData(color: Colors.white),
     titleTextStyle: TextStyle(color: COLOR_DARK_TEXT, fontSize: 20),
   ),
   listTileTheme: const ListTileThemeData(
