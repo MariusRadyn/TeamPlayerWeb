@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -8,8 +9,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as path;
 import 'package:image_picker/image_picker.dart';
 import 'package:teamplayerwebapp/utils/globalData.dart';
-
-import 'helpers.dart';
 
 FirebaseStorage fireStorageInstance = FirebaseStorage.instance;
 List<Reference> fireAllSongsRef = [];
@@ -174,5 +173,56 @@ Future<void> fireDbWrite(String collection, String table, SongData song) async {
     print('Data added successfully!');
   } catch (e) {
     print('Error adding data: $e');
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Firestore Authentication
+// ----------------------------------------------------------------------------
+class FirbaseAuthService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<User?> fireAuthCreateUser(String email, String password) async {
+    try {
+      UserCredential credential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      return credential.user;
+    } catch (e) {
+      print("Firebase Auth Error: $e");
+      return null;
+    }
+  }
+
+  Future<User?> fireAuthSignIn(String email, String password) async {
+    try {
+      UserCredential credential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      return credential.user;
+    } catch (e) {
+      print("Firebase Auth Error: $e");
+      return null;
+    }
+  }
+
+  Future<void> fireAuthSignOut() async {
+    try {
+      await _auth.signOut();
+    } catch (e) {
+      print("Firebase Auth Error: $e");
+    }
+  }
+
+  Future<void> fireAuthResetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      print("Firebase Auth Error: $e");
+    }
   }
 }

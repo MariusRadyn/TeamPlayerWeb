@@ -33,6 +33,7 @@ dependencies:
   firebase_core: ^3.8.0
   cloud_firestore: ^5.5.0
   firebase_storage: ^12.3.6
+  firebase_auth: ^5.3.3
   cupertino_icons: ^1.0.8
   image_picker: ^1.0.4
   shared_preferences: ^2.0.6
@@ -65,6 +66,7 @@ flutter:
   assets:
     - assets/images/pearl_black.png
     - assets/images/author1.jpg
+    - assets/images/warning.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

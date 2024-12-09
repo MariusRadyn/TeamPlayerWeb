@@ -15,10 +15,10 @@ class _loginPageState extends State<loginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: Text(''),
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 200),
+        padding: EdgeInsets.only(left: 20, right: 20),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -28,7 +28,6 @@ class _loginPageState extends State<loginPage> {
                 hintText: "Enter Email Address",
               ),
               SizedBox(height: 20),
-
               // Password
               textInputWidget(
                 hintText: "Password",
@@ -37,20 +36,29 @@ class _loginPageState extends State<loginPage> {
               SizedBox(height: 20),
 
               // Login Button
-              Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(40),
-                  color: COLOR_ORANGE,
-                ),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        'Login',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    ]),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(
+                        left: 80, right: 80, top: 10, bottom: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
+                      color: COLOR_ORANGE,
+                    ),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          TextButton(
+                            child: Text(
+                              "Login",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            onPressed: () {},
+                          ),
+                        ]),
+                  )
+                ],
               ),
 
               SizedBox(height: 20),

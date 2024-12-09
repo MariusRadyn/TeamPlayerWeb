@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 const COLOR_BLUE = Colors.lightBlueAccent;
-const COLOR_ORANGE = Colors.deepOrange;
+const COLOR_ORANGE = Color.fromARGB(255, 255, 60, 1);
 const COLOR_GREY = Color.fromARGB(139, 119, 119, 119);
 
 const COLOR_DARK_HEADER = Colors.white;

@@ -412,7 +412,7 @@ class MyDialogWidget extends StatelessWidget {
     required this.but2Text,
     this.onPressedBut1,
     this.onPressedBut2,
-    this.image = "images/warning.png",
+    this.image = "assets/images/warning.png",
   });
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teamplayerwebapp/loginPage.dart';
+import 'package:teamplayerwebapp/theme/theme_constants.dart';
 //import 'package:teamplayerwebapp/utils/db_manager.dart';
 import 'package:teamplayerwebapp/utils/globalData.dart';
 
@@ -113,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                         width: 120,
                         height: 40,
                         decoration: const BoxDecoration(
-                            color: Colors.deepOrangeAccent,
+                            color: COLOR_ORANGE,
                             borderRadius:
                                 BorderRadius.all(Radius.circular(20))),
                         child: TextButton(
