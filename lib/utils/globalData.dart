@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:teamplayerwebapp/utils/helpers.dart';
 
-bool synchBusy = false;
+final ValueNotifier<bool> syncBusy = ValueNotifier<bool>(false);
 late BitMonitor bitMonitorSychBusy;
 
 // UserData

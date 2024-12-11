@@ -276,25 +276,24 @@ class MyListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      //tileColor: Theme.of(context).colorScheme.primary,
-      dense: true,
-      //splashColor: Colors.cyan,
-      //Delete Icon
-      trailing: IconButton(
-        onPressed: onDelete,
-        icon: const Icon(Icons.delete_forever, color: Colors.red, size: 30),
+    return Column(children: [
+      ListTile(
+        dense: true,
+
+        //Delete Icon
+        trailing: IconButton(
+          onPressed: onDelete,
+          icon: const Icon(Icons.delete_forever, color: Colors.red, size: 30),
+        ),
+        title: Text(
+          text,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Text(subText, overflow: TextOverflow.ellipsis),
+        onTap: onTap,
       ),
-      title: Text(
-        text,
-        overflow: TextOverflow.ellipsis,
-        //style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-        //color: Theme.of(context).colorScheme.onPrimary,
-        //),
-      ),
-      subtitle: Text(subText, overflow: TextOverflow.ellipsis),
-      onTap: onTap,
-    );
+      SizedBox(height: 3),
+    ]);
   }
 }
 
@@ -537,7 +536,7 @@ class MyMessageBox {
 
 class SyncLib {
   List<SongData> _songData = [];
-  bool _isSyncing = true;
+  bool _syncBusy = true;
   Function(List<SongData>)? onListUpdate;
   Function(bool)? onSyncDone;
 
@@ -569,8 +568,8 @@ class SyncLib {
       onListUpdate!(_songData);
     }
 
-    _isSyncing = false;
-    onSyncDone!(_isSyncing);
+    _syncBusy = false;
+    onSyncDone!(_syncBusy);
   }
 }
 
@@ -653,7 +652,11 @@ class GlobalSnackBar {
 
   static void show(String message) {
     scaffoldMessengerKey.currentState?.showSnackBar(
-      SnackBar(content: Text(message)),
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.white,
+      ),
     );
   }
 

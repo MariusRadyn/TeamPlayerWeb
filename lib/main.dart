@@ -36,7 +36,7 @@ class _MyAppState extends State<MyApp> {
   int _currentIndex = 0;
   final SyncLib _syncLib = SyncLib();
 
-  late BitMonitor bitMonitorSychBusy;
+  //late BitMonitor bitMonitorSychBusy;
 
   final List _pages = [
     {"page": const HomePage(), "title": Text("")},
@@ -50,7 +50,6 @@ class _MyAppState extends State<MyApp> {
     userData.userName = "Marius";
     userData.surname = "Radyn";
     userData.userID = "user1";
-    synchBusy = true;
 
     super.initState();
 
@@ -62,11 +61,12 @@ class _MyAppState extends State<MyApp> {
       }
     };
 
-    _syncLib.onSyncDone = (_syncDone) {
+    _syncLib.onSyncDone = (_syncBusy) {
       if (mounted) {
         setState(() {
-          synchBusy = !_syncDone;
-          bitMonitorSychBusy.bit.value = synchBusy;
+          syncBusy.value = _syncBusy;
+          GlobalSnackBar.show('Synch Done (${lstSongsLib.length} Songs)');
+          print('Synch Done (${lstSongsLib.length} Songs)');
         });
       }
     };
@@ -75,12 +75,13 @@ class _MyAppState extends State<MyApp> {
 
     // Show SnackBar after the first frame is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      GlobalSnackBar.show('Hello from main page2');
+      GlobalSnackBar.show('Synching...');
     });
   }
 
   @override
   void dispose() {
+    syncBusy.dispose();
     super.dispose();
   }
 
@@ -136,7 +137,7 @@ class _MyAppState extends State<MyApp> {
           items: [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              label: 'Home $_currentIndex',
+              label: 'Home',
             ),
             BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Setlist'),
             BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Library'),

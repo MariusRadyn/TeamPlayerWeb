@@ -55,7 +55,7 @@ ThemeData darkTheme = ThemeData(
   listTileTheme: const ListTileThemeData(
     titleTextStyle: TextStyle(fontSize: 20, color: COLOR_DARK_TEXT),
     subtitleTextStyle: TextStyle(fontSize: 12, color: COLOR_ORANGE),
-    tileColor: COLOR_APPBAR,
+    tileColor: Color.fromARGB(22, 30, 104, 104),
   ),
   textTheme: const TextTheme(
     displayLarge: TextStyle(

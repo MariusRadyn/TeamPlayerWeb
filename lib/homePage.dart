@@ -14,13 +14,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool loggedIn = true;
-  //late BitMonitor bitMonitorSychBusy;
+  //BitMonitor bitMonitorSychBusy = BitMonitor(onBitChanged: _onBitChanged);
 
   @override
   void initState() {
     super.initState();
 
-    // Show SnackBar after the first frame is built
+    //Show SnackBar after the first frame is built
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   if (synchBusy) {
     //     ScaffoldMessenger.of(context).showSnackBar(
@@ -51,13 +51,13 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  // ValueListenableBuilder<bool>(
-                  //   valueListenable: bitMonitorSychBusy.bit,
-                  //   builder: (context, value, child) {
-                  //     return Text('Bit is ${value ? "ON" : "OFF"}');
-                  //   },
-                  // ),
-                  // Login Profile
+                  ValueListenableBuilder<bool>(
+                    valueListenable: syncBusy,
+                    builder: (context, value, child) {
+                      return Text('SynchBusy: ${value}');
+                    },
+                  ),
+                  //Login Profile
                   Stack(
                     children: [
                       // Backdrop

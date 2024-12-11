@@ -15,15 +15,18 @@ class LibraryPage extends StatefulWidget {
 class _LibraryPageState extends State<LibraryPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView.builder(
-        itemCount: lstSongsLib.length,
-        itemBuilder: (context, index) {
-          return MyListTile(
-            text: lstSongsLib[index].songName,
-            subText: lstSongsLib[index].author,
-          );
-        },
+    return Container(
+      margin: const EdgeInsets.only(top: 10),
+      child: Scaffold(
+        body: ListView.builder(
+          itemCount: lstSongsLib.length,
+          itemBuilder: (context, index) {
+            return MyListTile(
+              text: lstSongsLib[index].songName,
+              subText: lstSongsLib[index].author,
+            );
+          },
+        ),
       ),
 
       // FutureBuilder<List<Reference>>(
