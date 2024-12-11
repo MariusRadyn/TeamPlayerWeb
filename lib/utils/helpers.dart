@@ -541,7 +541,7 @@ class SyncLib {
   Function(List<SongData>)? onListUpdate;
   Function(bool)? onSyncDone;
 
-  void Sync() async {
+  Future<void> sync(BuildContext context) async {
     List<Reference> lstRef = await fireStoreGetFilesList(userData.userID);
     _songData.clear();
 
@@ -644,6 +644,44 @@ class _textInputWidgetState extends State<textInputWidget> {
         ),
       ),
     );
+  }
+}
+
+class GlobalSnackBar {
+  static final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+
+  static void show(String message) {
+    scaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  // Cleanup
+  void dispose() {
+    //scaffoldMessengerKey.currentState?.dispose();
+  }
+}
+
+class BitMonitor {
+  final ValueNotifier<bool> bit = ValueNotifier<bool>(false);
+  final Function(bool) onBitChanged;
+
+  BitMonitor({required this.onBitChanged}) {
+    // Listen to changes in the bit
+    bit.addListener(() {
+      onBitChanged(bit.value); // Fire callback
+    });
+  }
+
+  // Method to toggle the bit
+  void toggleBit() {
+    bit.value = !bit.value;
+  }
+
+  // Cleanup
+  void dispose() {
+    bit.dispose();
   }
 }
 

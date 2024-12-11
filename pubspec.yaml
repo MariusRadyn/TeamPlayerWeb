@@ -67,6 +67,7 @@ flutter:
     - assets/images/pearl_black.png
     - assets/images/author1.jpg
     - assets/images/warning.png
+    - assets/images/profile.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

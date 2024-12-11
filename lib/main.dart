@@ -34,7 +34,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   int _currentIndex = 0;
-  SyncLib _syncLib = SyncLib();
+  final SyncLib _syncLib = SyncLib();
+
+  late BitMonitor bitMonitorSychBusy;
 
   final List _pages = [
     {"page": const HomePage(), "title": Text("")},
@@ -64,11 +66,17 @@ class _MyAppState extends State<MyApp> {
       if (mounted) {
         setState(() {
           synchBusy = !_syncDone;
+          bitMonitorSychBusy.bit.value = synchBusy;
         });
       }
     };
 
-    _syncLib.Sync();
+    _syncLib.sync(context);
+
+    // Show SnackBar after the first frame is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      GlobalSnackBar.show('Hello from main page2');
+    });
   }
 
   @override
@@ -103,6 +111,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scaffoldMessengerKey: GlobalSnackBar.scaffoldMessengerKey,
       debugShowCheckedModeBanner: false,
       theme: darkTheme,
       home: Scaffold(
