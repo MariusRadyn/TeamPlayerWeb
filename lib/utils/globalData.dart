@@ -7,8 +7,11 @@ final ValueNotifier<bool> syncBusy = ValueNotifier<bool>(false);
 late BitMonitor bitMonitorSychBusy;
 
 // UserData
+final UserData userData = UserData();
 final String fireUserName = 'user1';
 final String fireUserRecyclebin = '${fireUserName}_recycle/';
+
+final String picBACKGROUND = 'assets/images/pearl_black.png';
 
 // Song Font Sizes
 const String songWordsFont = 'SpaceMono';
@@ -63,7 +66,6 @@ AppSettings appSettings = AppSettings();
 List<PlayListData> myPlayList = <PlayListData>[];
 List<LocalSongsLibrary> mySongsLibrary = <LocalSongsLibrary>[];
 
-UserData userData = UserData();
 List<SongData> lstSongsLib = [];
 bool isSyncing = true;
 
@@ -201,10 +203,28 @@ class LocalPlaylistItems {
   }
 }
 
-class UserData {
+class UserData extends ChangeNotifier {
   String userName = "";
   String surname = "";
   String userID = "";
+  String? email = "";
+  String errorMsg = "";
+  bool isLoggedIn = false;
+  bool emailValidated = false;
+
+  void login(String userid, String email) {
+    userID = userid;
+    email = email;
+    isLoggedIn = true;
+    notifyListeners();
+  }
+
+  void logout() {
+    userID = "";
+    email = "";
+    isLoggedIn = false;
+    notifyListeners();
+  }
 }
 
 class SongData {

@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 //import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:teamplayerwebapp/theme/theme_constants.dart';
+import 'package:teamplayerwebapp/theme/theme_manager.dart';
 import 'package:teamplayerwebapp/utils/firebase.dart';
 import 'package:teamplayerwebapp/utils/globalData.dart';
 
@@ -96,6 +98,14 @@ Future<void> MySimpleDialog(BuildContext context) {
         ],
       );
     },
+  );
+}
+
+ButtonStyle MyButtonStyle(Color backgroundColor) {
+  return TextButton.styleFrom(
+    minimumSize: Size(100, 50),
+    backgroundColor: backgroundColor,
+    shadowColor: Colors.white,
   );
 }
 
@@ -507,30 +517,224 @@ class MyDialogBox {
 
 class MyMessageBox {
   final String message;
+  final String header;
   String image;
 
-  MyMessageBox({required this.message, this.image = ""});
+  MyMessageBox({required this.message, required this.header, this.image = ""});
 
   Future<void> dialogBuilder(BuildContext context) {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.labelLarge,
-              ),
-              child: Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: SizedBox(
+            width: 250, // Custom width
+            height: 200, // Custom height
+
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Heading
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // Image
+                        Image.asset(image, height: 30, width: 30),
+                        SizedBox(width: 8),
+                        // Heading
+                        Text(
+                          header,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ]),
+                  SizedBox(height: 10),
+                  // Message
+                  Text(
+                    message,
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 20),
+                  // Button
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                    },
+                    style: MyButtonStyle(COLOR_ORANGE), // Button color
+                    child: const Text(
+                      "OK",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                ]),
+          ),
         );
       },
     );
+  }
+}
+
+class MyLoginBox {
+  final TextEditingController _pwController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+
+  void Dispose() {
+    _pwController.dispose();
+    _emailController.dispose();
+  }
+
+  Future<void> dialogBuilder(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.8, // Custom width
+            height: MediaQuery.of(context).size.height * 0.4, // Custom height
+
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Heading
+                  Text(
+                    "Login",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+
+                  SizedBox(height: 10),
+                  // Email
+                  textInputWidget(
+                    controller: _emailController,
+                    hintText: "Enter Email Address",
+                    width: 300,
+                  ),
+                  SizedBox(height: 20),
+                  // Password
+                  textInputWidget(
+                    controller: _pwController,
+                    hintText: "Password",
+                    isPasswordField: true,
+                    width: 300,
+                  ),
+                  SizedBox(height: 20),
+                  // Buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Cancel Button
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        style: MyButtonStyle(COLOR_ORANGE),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal),
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+
+                      SizedBox(width: 10),
+
+                      // OK Button
+                      TextButton(
+                        onPressed: () {
+                          login(context);
+                        },
+                        style: MyButtonStyle(COLOR_ORANGE),
+                        child: const Text(
+                          "OK",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal),
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                    ],
+                  ),
+                ]),
+          ),
+        );
+      },
+    );
+  }
+
+  void login(BuildContext context) async {
+    FirbaseAuthService _auth = FirbaseAuthService();
+
+    if (_emailController.text.isEmpty || _pwController.text.isEmpty) {
+      MyMessageBox(
+        header: "Login Error",
+        message: 'Please enter both email and password.',
+        image: "assets/images/warning.png",
+      ).dialogBuilder(context);
+      return;
+    }
+
+    if (!_emailController.text.contains('@')) {
+      MyMessageBox(
+        header: "Login Error",
+        message: 'Please enter a valid email address.',
+        image: "assets/images/warning.png",
+      ).dialogBuilder(context);
+      return;
+    }
+
+    // Show status indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      User? user =
+          await _auth.fireAuthSignIn(_emailController.text, _pwController.text);
+
+      // Pop status indicator
+      Navigator.of(context).pop();
+
+      if (user != null) {
+        userData.userID = user.uid;
+        userData.email = user.email;
+        userData.isLoggedIn = true;
+        userData.login(user.uid, user.email!);
+
+        print('User logged in');
+        Navigator.of(context).pop();
+      } else {
+        userData.logout();
+        print(userData.errorMsg);
+        MyMessageBox(
+                header: "Error",
+                message: userData.errorMsg,
+                image: "assets/images/warning.png")
+            .dialogBuilder(context);
+      }
+    } catch (e) {
+      // Pop status indicator
+      Navigator.of(context).pop();
+      print('Error: $e');
+    }
   }
 }
 
@@ -584,6 +788,7 @@ class textInputWidget extends StatefulWidget {
   final FormFieldValidator<String>? validator;
   final ValueChanged<String>? onFieldSubmitted;
   final TextInputType? inputType;
+  final double? width;
 
   const textInputWidget(
       {this.controller,
@@ -594,11 +799,12 @@ class textInputWidget extends StatefulWidget {
       this.helperText,
       this.onSaved,
       this.validator,
+      this.width,
       this.onFieldSubmitted,
       this.inputType});
 
   @override
-  _textInputWidgetState createState() => new _textInputWidgetState();
+  _textInputWidgetState createState() => _textInputWidgetState();
 }
 
 class _textInputWidgetState extends State<textInputWidget> {
@@ -607,7 +813,7 @@ class _textInputWidgetState extends State<textInputWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
+      width: widget.width,
       //clipBehavior: Clip.hardEdge,
       //decoration: BoxDecoration(
       //  borderRadius: BorderRadius.circular(4),

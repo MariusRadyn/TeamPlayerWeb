@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamplayerwebapp/loginPage.dart';
-import 'package:teamplayerwebapp/theme/theme_constants.dart';
+import 'package:teamplayerwebapp/theme/theme_manager.dart';
 //import 'package:teamplayerwebapp/utils/db_manager.dart';
 import 'package:teamplayerwebapp/utils/globalData.dart';
 import 'package:teamplayerwebapp/utils/helpers.dart';
@@ -13,25 +13,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool loggedIn = true;
-  //BitMonitor bitMonitorSychBusy = BitMonitor(onBitChanged: _onBitChanged);
-
   @override
   void initState() {
     super.initState();
+    userData.addListener(() {
+      setState(() {}); // Rebuild the UI when UserData changes
+    });
+  }
 
-    //Show SnackBar after the first frame is built
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   if (synchBusy) {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(content: Text('Synching...')),
-    //     );
-    //   } else {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(content: Text('Synching Done')),
-    //     );
-    //   }
-    // });
+  @override
+  void Dispose() {
+    userData.removeListener(() {
+      setState(() {});
+    });
+    super.dispose();
   }
 
   @override
@@ -39,7 +34,7 @@ class _HomePageState extends State<HomePage> {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/images/pearl_black.png'),
+          image: AssetImage(picBACKGROUND),
           fit: BoxFit.cover,
         ),
       ),
@@ -51,12 +46,12 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  ValueListenableBuilder<bool>(
-                    valueListenable: syncBusy,
-                    builder: (context, value, child) {
-                      return Text('SynchBusy: ${value}');
-                    },
-                  ),
+                  // ValueListenableBuilder<bool>(
+                  //   valueListenable: syncBusy,
+                  //   builder: (context, value, child) {
+                  //     return Text('SynchBusy: ${value}');
+                  //   },
+                  // ),
                   //Login Profile
                   Stack(
                     children: [
@@ -118,15 +113,8 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Container(
                             padding: EdgeInsets.only(top: 130),
-                            child: Text(
-                              'Please login to continue',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          )
+                            child: showWelcomeMsg(),
+                          ),
                         ],
                       ),
                       // Login Button
@@ -150,12 +138,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                               onPressed: () {
-                                //GlobalSnackBar.show('Hello from home page');
-
-                                // final snack =
-                                //     SnackBar(content: Text("Snackbar"));
-                                // ScaffoldMessenger.of(context)
-                                //     .showSnackBar(snack);
+                                MyLoginBox().dialogBuilder(context);
 
                                 // Navigator.push(
                                 //   context,
@@ -177,5 +160,27 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Widget showWelcomeMsg() {
+    if (userData.isLoggedIn) {
+      return Text(
+        'Welcome ${userData.userName}',
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+    } else {
+      return Text(
+        'Please login to continue',
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+    }
   }
 }

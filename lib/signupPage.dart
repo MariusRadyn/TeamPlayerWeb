@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:teamplayerwebapp/homePage.dart';
-import 'package:teamplayerwebapp/theme/theme_constants.dart';
+import 'package:teamplayerwebapp/theme/theme_manager.dart';
+import 'package:teamplayerwebapp/utils/globalData.dart';
 import 'package:teamplayerwebapp/utils/helpers.dart';
 import 'package:teamplayerwebapp/utils/firebase.dart';
 
@@ -14,7 +15,6 @@ class signupPage extends StatefulWidget {
 
 class _signupPageState extends State<signupPage> {
   FirbaseAuthService _auth = FirbaseAuthService();
-
   TextEditingController _userController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _pwController = TextEditingController();
@@ -125,7 +125,13 @@ class _signupPageState extends State<signupPage> {
     User? user = await _auth.fireAuthCreateUser(email, password);
 
     if (user != null) {
+      userData.userID = user.uid;
+      userData.userName = username;
+
       print('User created successfully');
+
+      fireDbWriteUserData(user, username, "");
+
       Navigator.push(
           context,
           MaterialPageRoute(

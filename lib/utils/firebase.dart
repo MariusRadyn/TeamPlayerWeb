@@ -137,6 +137,18 @@ Future<void> fireStoreDeleteFile(String ref) async {
   await fireStorageInstance.ref(ref).delete();
 }
 
+Future<String> fireStoreUploadProfilePic(String userId, File imageFile) async {
+  Reference storageRef =
+      FirebaseStorage.instance.ref().child('profile_pics/$userId.jpg');
+
+  UploadTask uploadTask = storageRef.putFile(imageFile);
+  TaskSnapshot snapshot = await uploadTask;
+
+  // Get download URL
+  String downloadUrl = await snapshot.ref.getDownloadURL();
+  return downloadUrl;
+}
+
 // ----------------------------------------------------------------------------
 // Firestore Database
 // ----------------------------------------------------------------------------
@@ -161,13 +173,31 @@ Future fireDbRead(String table) async {
   }
 }
 
-Future<void> fireDbWrite(String collection, String table, SongData song) async {
+Future<void> fireDbWriteSongData(
+    String collection, String table, SongData song) async {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   try {
     await firestore.collection(collection).doc(table).set({
       'songName': song.songName,
       'author': song.author,
       'genre': song.genre,
+    });
+
+    print('Data added successfully!');
+  } catch (e) {
+    print('Error adding data: $e');
+  }
+}
+
+Future<void> fireDbWriteUserData(
+    User user, String fullName, String profilePicUrl) async {
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  try {
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+      'fullName': fullName,
+      'email': user.email,
+      'profilePicUrl': profilePicUrl,
+      'createdAt': FieldValue.serverTimestamp(),
     });
 
     print('Data added successfully!');
@@ -205,6 +235,47 @@ class FirbaseAuthService {
 
       return credential.user;
     } catch (e) {
+      if (e is FirebaseAuthException) {
+        switch (e.code) {
+          //- **invalid-email**:
+          ///  - Thrown if the email address is not valid.
+          /// - **user-disabled**:
+          ///  - Thrown if the user corresponding to the given email has been disabled.
+          /// - **user-not-found**:
+          ///  - Thrown if there is no user corresponding to the given email.
+          /// - **wrong-password**:
+          ///  - Thrown if the password is invalid for the given email, or the account
+          ///    corresponding to the email does not have a password set.
+          /// - **too-many-requests**:
+          ///  - Thrown if the user sent too many requests at the same time, for security
+          ///     the api will not allow too many attemps at the same time, user will have
+          ///     to wait for some time
+          /// - **user-token-expired**:
+          ///  - Thrown if the user is no longer authenticated since his refresh token
+          ///    has been expired
+          /// - **network-request-failed**:
+          ///  - Thrown if there was a network request error, for example the user don't
+          ///    don't have internet connection
+          /// - **INVALID_LOGIN_CREDENTIALS** or **invalid-credential**:
+          ///  - Thrown if the password is invalid for the given email, or the account
+          ///    corresponding to the email does not have a password set.
+          ///    depending on if you are using firebase emulator or not the code is
+          ///    different
+          /// - **operation-not-allowed**:
+          ///  - Thrown if email/password accounts are not enabled. Enable
+          ///    email/password accounts in the Firebase Console, under the Auth tab.
+          ///
+          case 'invalid-email':
+          case 'wrong-password':
+          case 'invalid-credential':
+            userData.errorMsg = "Invalid email or password.";
+            break;
+
+          default:
+            userData.errorMsg = e.code;
+        }
+      }
+
       print("Firebase Auth Error: $e");
       return null;
     }

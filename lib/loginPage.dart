@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:teamplayerwebapp/homePage.dart';
 import 'package:teamplayerwebapp/signupPage.dart';
-import 'package:teamplayerwebapp/theme/theme_constants.dart';
+import 'package:teamplayerwebapp/theme/theme_manager.dart';
+import 'package:teamplayerwebapp/utils/globalData.dart';
 import 'package:teamplayerwebapp/utils/helpers.dart';
+import 'package:teamplayerwebapp/utils/firebase.dart';
 
 class loginPage extends StatefulWidget {
   const loginPage({super.key});
@@ -11,6 +15,9 @@ class loginPage extends StatefulWidget {
 }
 
 class _loginPageState extends State<loginPage> {
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _pwController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,13 +32,17 @@ class _loginPageState extends State<loginPage> {
             children: <Widget>[
               // Email Address
               textInputWidget(
+                controller: _emailController,
                 hintText: "Enter Email Address",
+                width: 300,
               ),
               SizedBox(height: 20),
               // Password
               textInputWidget(
+                controller: _pwController,
                 hintText: "Password",
                 isPasswordField: true,
+                width: 300,
               ),
               SizedBox(height: 20),
 
@@ -39,25 +50,27 @@ class _loginPageState extends State<loginPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    padding: EdgeInsets.only(
-                        left: 80, right: 80, top: 10, bottom: 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(40),
-                      color: COLOR_ORANGE,
-                    ),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          TextButton(
-                            child: Text(
-                              "Login",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            onPressed: () {},
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        TextButton(
+                          style: ButtonStyle(
+                            minimumSize: WidgetStatePropertyAll(Size(150, 50)),
+                            backgroundColor:
+                                WidgetStatePropertyAll(COLOR_ORANGE),
                           ),
-                        ]),
-                  )
+                          child: Text(
+                            "Login",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                          ),
+                          onPressed: () {
+                            login();
+                          },
+                        ),
+                      ]),
                 ],
               ),
 
@@ -88,5 +101,39 @@ class _loginPageState extends State<loginPage> {
         ),
       ),
     );
+  }
+
+  void login() async {
+    FirbaseAuthService _auth = FirbaseAuthService();
+
+    String email = _emailController.text;
+    String password = _pwController.text;
+
+    try {
+      User? user = await _auth.fireAuthSignIn(email, password);
+
+      if (user != null) {
+        userData.userID = user.uid;
+        userData.email = user.email;
+        userData.isLoggedIn = true;
+
+        print('User logged in');
+
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePage(),
+            ));
+      } else {
+        print(userData.errorMsg);
+        MyMessageBox(
+                header: "Login Error",
+                message: userData.errorMsg,
+                image: "assets/images/warning.png")
+            .dialogBuilder(context);
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 }
